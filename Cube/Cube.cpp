@@ -190,8 +190,9 @@ std::ostream &operator<<(std::ostream &os, const Cube &cube) {
   for (int i = 0; i < Cube::cube_size_; ++i) {
     os << std::string(first_and_last_offset, ' ');
     for (int j = 0; j < Cube::cube_size_; ++j) {
-      os << ColorToChar(cube.state_[(Cube::cube_size_ * Cube::cube_size_) * cube.D
-          + i * Cube::cube_size_ + j]) << ' ';
+      os << ColorToChar(cube.state_[
+                            (Cube::cube_size_ * Cube::cube_size_) * cube.D
+                                + i * Cube::cube_size_ + j]) << ' ';
     }
     os << '\n';
   }
@@ -310,6 +311,67 @@ void Cube::Rotate(const std::string &input) {
   }
 }
 
+void Cube::RotateWithOutput(const std::string &input, std::string &output) {
+  output += input;
+  if (input[input.length() - 1] != ' ') {
+    output += ' ';
+  }
+  int i = 0;
+  while (i < input.length()) {
+    Face rotation_face;
+    Rotation rotation_type = Clockwise;
+
+    switch (input[i]) {
+      case 'U': {
+        rotation_face = U;
+        break;
+      }
+      case 'L': {
+        rotation_face = L;
+        break;
+      }
+      case 'F': {
+        rotation_face = F;
+        break;
+      }
+      case 'R': {
+        rotation_face = R;
+        break;
+      }
+      case 'B': {
+        rotation_face = B;
+        break;
+      }
+      case 'D': {
+        rotation_face = D;
+        break;
+      }
+      default:
+        return;
+    }
+    ++i;
+
+    if ((input.length() - i) > 0) {
+      switch (input[i]) {
+        case '2':
+          rotation_type = Double;
+          ++i;
+          break;
+        case '\'':
+          rotation_type = Anticlockwise;
+          ++i;
+          break;
+        case ' ':
+          break;
+        default:
+          throw std::invalid_argument("invalid characters");
+      }
+      ++i;
+    }
+    RotateFace(rotation_face, rotation_type);
+  }
+}
+
 std::string Cube::Solve() {
   std::string moves;
 
@@ -322,109 +384,109 @@ std::string Cube::Solve() {
     // WHITE CROSS ON U
     while (!SolvedCross(U, Color::White)) {
       if (state_[10] == Color::White) {
-        Rotate("L");
+        RotateWithOutput("L", moves);
         while (state_[7] == Color::White) {
-          Rotate("U");
+          RotateWithOutput("U", moves);
         }
-        Rotate("F");
+        RotateWithOutput("F", moves);
       } else if (state_[19] == Color::White) {
-        Rotate("F");
+        RotateWithOutput("F", moves);
         while (state_[5] == Color::White) {
-          Rotate("U");
+          RotateWithOutput("U", moves);
         }
-        Rotate("R\'");
+        RotateWithOutput("R\'", moves);
       } else if (state_[28] == Color::White) {
-        Rotate("R\'");
+        RotateWithOutput("R\'", moves);
         while (state_[7] == Color::White) {
-          Rotate("U");
+          RotateWithOutput("U", moves);
         }
-        Rotate("F\'");
+        RotateWithOutput("F\'", moves);
       } else if (state_[37] == Color::White) {
-        Rotate("B");
+        RotateWithOutput("B", moves);
         while (state_[3] == Color::White) {
-          Rotate("U");
+          RotateWithOutput("U", moves);
         }
-        Rotate("L");
+        RotateWithOutput("L", moves);
       } else if (state_[12] == Color::White) {
         while (state_[1] == Color::White) {
-          Rotate("U");
+          RotateWithOutput("U", moves);
         }
-        Rotate("B\'");
+        RotateWithOutput("B\'", moves);
       } else if (state_[14] == Color::White) {
         while (state_[7] == Color::White) {
-          Rotate("U");
+          RotateWithOutput("U", moves);
         }
-        Rotate("F");
+        RotateWithOutput("F", moves);
       } else if (state_[21] == Color::White) {
         while (state_[3] == Color::White) {
-          Rotate("U");
+          RotateWithOutput("U", moves);
         }
-        Rotate("L\'");
+        RotateWithOutput("L\'", moves);
       } else if (state_[23] == Color::White) {
         while (state_[5] == Color::White) {
-          Rotate("U");
+          RotateWithOutput("U", moves);
         }
-        Rotate("R");
+        RotateWithOutput("R", moves);
       } else if (state_[30] == Color::White) {
         while (state_[7] == Color::White) {
-          Rotate("U");
+          RotateWithOutput("U", moves);
         }
-        Rotate("F\'");
+        RotateWithOutput("F\'", moves);
       } else if (state_[R * face_pieces_amount_ + 5] == Color::White) {
         while (state_[U * face_pieces_amount_ + 1] == Color::White) {
-          Rotate("U");
+          RotateWithOutput("U", moves);
         }
-        Rotate("B");
+        RotateWithOutput("B", moves);
       } else if (state_[39] == Color::White) {
         while (state_[5] == Color::White) {
-          Rotate("U");
+          RotateWithOutput("U", moves);
         }
-        Rotate("R\'");
+        RotateWithOutput("R\'", moves);
       } else if (state_[41] == Color::White) {
         while (state_[3] == Color::White) {
-          Rotate("U");
+          RotateWithOutput("U", moves);
         }
-        Rotate("L");
+        RotateWithOutput("L", moves);
       } else if (state_[16] == Color::White) {
         while (state_[3] == Color::White) {
-          Rotate("U");
+          RotateWithOutput("U", moves);
         }
-        Rotate("L U B\'");
+        RotateWithOutput("L U B\'", moves);
       } else if (state_[25] == Color::White) {
         while (state_[7] == Color::White) {
-          Rotate("U");
+          RotateWithOutput("U", moves);
         }
-        Rotate("F U L\'");
+        RotateWithOutput("F U L\'", moves);
       } else if (state_[34] == Color::White) {
         while (state_[5] == Color::White) {
-          Rotate("U");
+          RotateWithOutput("U", moves);
         }
-        Rotate("R U F\'");
+        RotateWithOutput("R U F\'", moves);
       } else if (state_[43] == Color::White) {
         while (state_[1] == Color::White) {
-          Rotate("U");
+          RotateWithOutput("U", moves);
         }
-        Rotate("B U R\'");
+        RotateWithOutput("B U R\'", moves);
       } else if (state_[46] == Color::White) {
         while (state_[7] == Color::White) {
-          Rotate("U");
+          RotateWithOutput("U", moves);
         }
-        Rotate("F2");
+        RotateWithOutput("F2", moves);
       } else if (state_[48] == Color::White) {
         while (state_[3] == Color::White) {
-          Rotate("U");
+          RotateWithOutput("U", moves);
         }
-        Rotate("L2");
+        RotateWithOutput("L2", moves);
       } else if (state_[50] == Color::White) {
         while (state_[5] == Color::White) {
-          Rotate("U");
+          RotateWithOutput("U", moves);
         }
-        Rotate("R2");
+        RotateWithOutput("R2", moves);
       } else if (state_[52] == Color::White) {
         while (state_[1] == Color::White) {
-          Rotate("U");
+          RotateWithOutput("U", moves);
         }
-        Rotate("B2");
+        RotateWithOutput("B2", moves);
       } else {
         throw std::logic_error("failed to solve white cross on U");
       }
@@ -433,20 +495,20 @@ std::string Cube::Solve() {
     // WHITE CROSS ON D
     while (!SolvedCross(D, Color::White)) {
       while (state_[7] != Color::White) {
-        Rotate("U");
+        RotateWithOutput("U", moves);
       }
       switch (state_[19]) {
         case Color::Blue:
-          Rotate("U L2");
+          RotateWithOutput("U L2", moves);
           break;
         case Color::Red:
-          Rotate("F2");
+          RotateWithOutput("F2", moves);
           break;
         case Color::Green:
-          Rotate("U\' R2");
+          RotateWithOutput("U\' R2", moves);
           break;
         case Color::Orange:
-          Rotate("U2 B2");
+          RotateWithOutput("U2 B2", moves);
           break;
         default:
           throw std::logic_error("failed to solve white cross on D");
@@ -461,64 +523,64 @@ std::string Cube::Solve() {
   while (!SolvedWhiteEdges()) {
     if (state_[U * face_pieces_amount_ + 0] == Color::White) {
       if (state_[L * face_pieces_amount_ + 0] == Color::Blue) {
-        Rotate(R"(U' F U F' U' F U F' U' F U F' U')");
+        RotateWithOutput(R"(U' F U F' U' F U F' U' F U F' U')", moves);
       } else if (state_[L * face_pieces_amount_ + 0] == Color::Red) {
-        Rotate(R"(U2 R U R' U' R U R' U' R U R' U')");
+        RotateWithOutput(R"(U2 R U R' U' R U R' U' R U R' U')", moves);
       } else if (state_[L * face_pieces_amount_ + 0] == Color::Green) {
-        Rotate(R"(U B U B' U' B U B' U' B U B' U')");
+        RotateWithOutput(R"(U B U B' U' B U B' U' B U B' U')", moves);
       } else if (state_[L * face_pieces_amount_ + 0] == Color::Orange) {
-        Rotate(R"(L U L' U' L U L' U' L U L' U')");
+        RotateWithOutput(R"(L U L' U' L U L' U' L U L' U')", moves);
       }
     } else if (state_[U * face_pieces_amount_ + 2] == Color::White) {
-      Rotate("U\'");
+      RotateWithOutput("U\'", moves);
     } else if (state_[U * face_pieces_amount_ + 6] == Color::White) {
-      Rotate("U");
+      RotateWithOutput("U", moves);
     } else if (state_[U * face_pieces_amount_ + 8] == Color::White) {
-      Rotate("U2");
+      RotateWithOutput("U2", moves);
     } else if (state_[L * face_pieces_amount_ + 8] == Color::White) {
-      Rotate("F U F\'");
+      RotateWithOutput("F U F\'", moves);
     } else if (state_[F * face_pieces_amount_ + 8] == Color::White) {
-      Rotate("R U R\' U");
+      RotateWithOutput("R U R\' U", moves);
     } else if (state_[R * face_pieces_amount_ + 8] == Color::White) {
-      Rotate("B U B\' U2");
+      RotateWithOutput("B U B\' U2", moves);
     } else if (state_[B * face_pieces_amount_ + 8] == Color::White) {
-      Rotate("L U L' U'");
+      RotateWithOutput("L U L' U'", moves);
     } else if (state_[L * face_pieces_amount_ + 2] == Color::White) {
-      Rotate(R"(F U F' U' F U F')");
+      RotateWithOutput(R"(F U F' U' F U F')", moves);
     } else if (state_[F * face_pieces_amount_ + 2] == Color::White) {
-      Rotate("R U R\' U' R U R\' U");
+      RotateWithOutput("R U R\' U' R U R\' U", moves);
     } else if (state_[R * face_pieces_amount_ + 2] == Color::White) {
-      Rotate(R"(B U B' U' B U B' U2)");
+      RotateWithOutput(R"(B U B' U' B U B' U2)", moves);
     } else if (state_[B * face_pieces_amount_ + 2] == Color::White) {
-      Rotate(R"(L U L' U' L U L' U')");
+      RotateWithOutput(R"(L U L' U' L U L' U')", moves);
     } else if (state_[L * face_pieces_amount_ + 6] == Color::White) {
-      Rotate("L U\' L\'");
+      RotateWithOutput("L U\' L\'", moves);
     } else if (state_[F * face_pieces_amount_ + 6] == Color::White) {
-      Rotate("F U\' F\' U");
+      RotateWithOutput("F U\' F\' U", moves);
     } else if (state_[R * face_pieces_amount_ + 6] == Color::White) {
-      Rotate("R U\' R\' U2");
+      RotateWithOutput("R U\' R\' U2", moves);
     } else if (state_[B * face_pieces_amount_ + 6] == Color::White) {
-      Rotate(R"(B U' B' U')");
+      RotateWithOutput(R"(B U' B' U')", moves);
     } else if (state_[L * face_pieces_amount_ + 0] == Color::White) {
-      Rotate(R"(U L U' L' U L U' L')");
+      RotateWithOutput(R"(U L U' L' U L U' L')", moves);
     } else if (state_[F * face_pieces_amount_ + 0] == Color::White) {
-      Rotate(R"(U F U' F' U F U' F' U)");
+      RotateWithOutput(R"(U F U' F' U F U' F' U)", moves);
     } else if (state_[R * face_pieces_amount_ + 0] == Color::White) {
-      Rotate(R"(U R U' R' U R U' R' U2)");
+      RotateWithOutput(R"(U R U' R' U R U' R' U2)", moves);
     } else if (state_[B * face_pieces_amount_ + 0] == Color::White) {
-      Rotate(R"(U B U' B' U B U' B' U')");
+      RotateWithOutput(R"(U B U' B' U B U' B' U')", moves);
     } else if (state_[D * face_pieces_amount_ + 0] == Color::White
         && state_[L * face_pieces_amount_ + 8] != Color::Blue) {
-      Rotate(R"(F U F' U' F U F' U' F U F')");
+      RotateWithOutput(R"(F U F' U' F U F' U' F U F')", moves);
     } else if (state_[D * face_pieces_amount_ + 2] == Color::White
         && state_[F * face_pieces_amount_ + 8] != Color::Red) {
-      Rotate(R"(R U R' U' R U R' U' R U R' U)");
+      RotateWithOutput(R"(R U R' U' R U R' U' R U R' U)", moves);
     } else if (state_[D * face_pieces_amount_ + 6] == Color::White
         && state_[B * face_pieces_amount_ + 8] != Color::Orange) {
-      Rotate(R"(L U L' U' L U L' U' L U L' U')");
+      RotateWithOutput(R"(L U L' U' L U L' U' L U L' U')", moves);
     } else if (state_[D * face_pieces_amount_ + 8] == Color::White
         && state_[R * face_pieces_amount_ + 8] != Color::Green) {
-      Rotate(R"(B U B' U' B U B' U' B U B' U2)");
+      RotateWithOutput(R"(B U B' U' B U B' U' B U B' U2)", moves);
     }
   }
 
@@ -532,58 +594,58 @@ std::string Cube::Solve() {
         && state_[F * face_pieces_amount_ + 1] != Color::Yellow) {
       if (state_[U * face_pieces_amount_ + 7] == Color::Green
           && state_[F * face_pieces_amount_ + 1] == Color::Red) {
-        Rotate(R"(U R U' R' U' F' U F)");
+        RotateWithOutput(R"(U R U' R' U' F' U F)", moves);
       } else if (state_[U * face_pieces_amount_ + 7] == Color::Red
           && state_[F * face_pieces_amount_ + 1] == Color::Green) {
-        Rotate(R"(U2 F' U F U R U' R')");
+        RotateWithOutput(R"(U2 F' U F U R U' R')", moves);
       } else if (state_[U * face_pieces_amount_ + 7] == Color::Orange
           && state_[F * face_pieces_amount_ + 1] == Color::Green) {
-        Rotate(R"(B U' B' U' R' U R)");
+        RotateWithOutput(R"(B U' B' U' R' U R)", moves);
       } else if (state_[U * face_pieces_amount_ + 7] == Color::Green
           && state_[F * face_pieces_amount_ + 1] == Color::Orange) {
-        Rotate(R"(U R' U R U B U' B')");
+        RotateWithOutput(R"(U R' U R U B U' B')", moves);
       } else if (state_[U * face_pieces_amount_ + 7] == Color::Blue
           && state_[F * face_pieces_amount_ + 1] == Color::Orange) {
-        Rotate(R"(U' L U' L' U' B' U B)");
+        RotateWithOutput(R"(U' L U' L' U' B' U B)", moves);
       } else if (state_[U * face_pieces_amount_ + 7] == Color::Orange
           && state_[F * face_pieces_amount_ + 1] == Color::Blue) {
-        Rotate(R"(B' U B U L U' L')");
+        RotateWithOutput(R"(B' U B U L U' L')", moves);
       } else if (state_[U * face_pieces_amount_ + 7] == Color::Blue
           && state_[F * face_pieces_amount_ + 1] == Color::Red) {
-        Rotate(R"(U' L' U L U F U' F')");
+        RotateWithOutput(R"(U' L' U L U F U' F')", moves);
       } else if (state_[U * face_pieces_amount_ + 7] == Color::Red
           && state_[F * face_pieces_amount_ + 1] == Color::Blue) {
-        Rotate(R"(U2 F U' F' U' L' U L)");
+        RotateWithOutput(R"(U2 F U' F' U' L' U L)", moves);
       }
     } else if (state_[U * face_pieces_amount_ + 5] != Color::Yellow
         && state_[R * face_pieces_amount_ + 1] != Color::Yellow) {
-      Rotate("U");
+      RotateWithOutput("U", moves);
     } else if (state_[U * face_pieces_amount_ + 1] != Color::Yellow
         && state_[B * face_pieces_amount_ + 1] != Color::Yellow) {
-      Rotate("U2");
+      RotateWithOutput("U2", moves);
     } else if (state_[U * face_pieces_amount_ + 3] != Color::Yellow
         && state_[L * face_pieces_amount_ + 1] != Color::Yellow) {
-      Rotate("U\'");
+      RotateWithOutput("U\'", moves);
     } else if (state_[B * face_pieces_amount_ + 5]
         != state_[B * face_pieces_amount_ + 4]
         || state_[L * face_pieces_amount_ + 3]
             != state_[L * face_pieces_amount_ + 4]) {
-      Rotate(R"(B' U B U L U' L')");
+      RotateWithOutput(R"(B' U B U L U' L')", moves);
     } else if (state_[L * face_pieces_amount_ + 5]
         != state_[L * face_pieces_amount_ + 4]
         || state_[F * face_pieces_amount_ + 3]
             != state_[F * face_pieces_amount_ + 4]) {
-      Rotate(R"(L' U L U F U' F')");
+      RotateWithOutput(R"(L' U L U F U' F')", moves);
     } else if (state_[F * face_pieces_amount_ + 5]
         != state_[F * face_pieces_amount_ + 4]
         || state_[R * face_pieces_amount_ + 3]
             != state_[R * face_pieces_amount_ + 4]) {
-      Rotate(R"(F' U F U R U' R')");
+      RotateWithOutput(R"(F' U F U R U' R')", moves);
     } else if (state_[R * face_pieces_amount_ + 5]
         != state_[R * face_pieces_amount_ + 4]
         || state_[B * face_pieces_amount_ + 3]
             != state_[B * face_pieces_amount_ + 4]) {
-      Rotate(R"(B U' B' U' R' U R)");
+      RotateWithOutput(R"(B U' B' U' R' U R)", moves);
     } else {
       throw std::logic_error("failed to solve 2nd layer");
     }
@@ -599,36 +661,36 @@ std::string Cube::Solve() {
     // only colors to be == are yellow because others can
     // be present only once.
     if (state_[1] == state_[3]) {
-      Rotate(R"(F R U R' U' R U R' U' F')");
+      RotateWithOutput(R"(F R U R' U' R U R' U' F')", moves);
     } else if (state_[3] == state_[5]) {
-      Rotate(R"(F R U R' U' F')");
+      RotateWithOutput(R"(F R U R' U' F')", moves);
     } else if (state_[U * face_pieces_amount_ + 1] != Color::Yellow
         && state_[U * face_pieces_amount_ + 3] != Color::Yellow
         && state_[U * face_pieces_amount_ + 5] != Color::Yellow
         && state_[U * face_pieces_amount_ + 7] != Color::Yellow) {
-      Rotate(R"(F R U R' U' F' U2 F R U R' U' R U R' U' F')");
+      RotateWithOutput(R"(F R U R' U' F' U2 F R U R' U' R U R' U' F')", moves);
     } else {
-      Rotate("U");
+      RotateWithOutput("U", moves);
     }
   }
   while (state_[19] != Color::Red) {
-    Rotate("U");
+    RotateWithOutput("U", moves);
   }
   if (state_[10] != Color::Blue || state_[19] != Color::Red
       || state_[28] != Color::Green || state_[37] != Color::Orange) {
     if (state_[10] == Color::Blue) {
-      Rotate("L U L\' U L U2 L\' U");
+      RotateWithOutput("L U L\' U L U2 L\' U", moves);
     } else if (state_[10] == Color::Orange) {
       if (state_[28] == Color::Green) {
-        Rotate("F U F\' U F U2 F\' U");
+        RotateWithOutput("F U F\' U F U2 F\' U", moves);
       } else {
-        Rotate("U R U R\' U R U2 R\' U");
+        RotateWithOutput("U R U R\' U R U2 R\' U", moves);
       }
     } else if (state_[10] == Color::Green) {
-      Rotate(R"(U' B U B' U B U2 B' U)");
+      RotateWithOutput(R"(U' B U B' U B U2 B' U)", moves);
       if (state_[10] != Color::Blue || state_[19] != Color::Red
           || state_[28] != Color::Green || state_[37] != Color::Orange) {
-        Rotate("U' R U R\' U R U2 R\' U2");
+        RotateWithOutput("U' R U R\' U R U2 R\' U2", moves);
       }
     }
   }
@@ -636,18 +698,18 @@ std::string Cube::Solve() {
   // OLL
   while (!SolvedFace(U)) {
     while (state_[8] == Color::Yellow) {
-      Rotate("U");
+      RotateWithOutput("U", moves);
     }
     if (state_[20] == Color::Yellow) {
-      Rotate(R"(R F' R' F R F' R' F)");
+      RotateWithOutput(R"(R F' R' F R F' R' F)", moves);
     } else if (state_[27] == Color::Yellow) {
-      Rotate(R"(F' R F R' F' R F R')");
+      RotateWithOutput(R"(F' R F R' F' R F R')", moves);
     }
   }
 
   // PLL
   while (state_[19] != Color::Red) {
-    Rotate("U");
+    RotateWithOutput("U", moves);
   }
   if (Solved()) {
     return moves;
@@ -660,7 +722,7 @@ std::string Cube::Solve() {
             == state_[F * face_pieces_amount_ + 2]) {
           break;
         }
-        Rotate("U");
+        RotateWithOutput("U", moves);
       }
       if (state_[F * face_pieces_amount_ + 0]
           == state_[F * face_pieces_amount_ + 2]) {
@@ -668,15 +730,15 @@ std::string Cube::Solve() {
             == state_[L * face_pieces_amount_ + 1]
             && state_[B * face_pieces_amount_ + 1]
                 == state_[B * face_pieces_amount_ + 2]) {
-          Rotate(R"(R' D2 R U R' D2 R U2 R' D2 R U R' D2 R)");
+          RotateWithOutput(R"(R' D2 R U R' D2 R U2 R' D2 R U R' D2 R)", moves);
         } else if (state_[B * face_pieces_amount_ + 0]
             == state_[B * face_pieces_amount_ + 1]
             && state_[R * face_pieces_amount_ + 1]
                 == state_[R * face_pieces_amount_ + 2]) {
-          Rotate(R"(L D2 L' U' L D2 L' U2 L D2 L' U' L D2 L')");
+          RotateWithOutput(R"(L D2 L' U' L D2 L' U2 L D2 L' U' L D2 L')", moves);
         } else if (state_[R * face_pieces_amount_ + 0]
             == state_[R * face_pieces_amount_ + 2]) {
-          Rotate(R"(R2 U2 R2 U2 R2 U R2 U2 R2 U2 R2 U')");
+          RotateWithOutput(R"(R2 U2 R2 U2 R2 U R2 U2 R2 U2 R2 U')", moves);
         } else {
           throw std::logic_error("failed to do PLL");
         }
@@ -684,12 +746,14 @@ std::string Cube::Solve() {
           == state_[R * face_pieces_amount_ + 2]
           && state_[L * face_pieces_amount_ + 2]
               == state_[R * face_pieces_amount_ + 0]) {
-        Rotate(R"(U R' U' R' D' R U' R' D R U R' D' R U R' D R2)");
+        RotateWithOutput(R"(U R' U' R' D' R U' R' D R U R' D' R U R' D R2)",
+                         moves);
       } else if (state_[F * face_pieces_amount_ + 0]
           == state_[B * face_pieces_amount_ + 2]
           && state_[F * face_pieces_amount_ + 2]
               == state_[B * face_pieces_amount_ + 0]) {
-        Rotate(R"(R' U' R' D' R U' R' D R U R' D' R U R' D R2)");
+        RotateWithOutput(R"(R' U' R' D' R U' R' D R U R' D' R U R' D R2)",
+                         moves);
       } else {
         throw std::logic_error("failed to PLL");
       }
@@ -779,12 +843,12 @@ bool Cube::IsStateCorrect() {
   std::array<Color, 54> initial = state_;
   try {
     Solve();
-    state_ = initial;
-    return true;
   } catch (const std::exception &exception) {
     state_ = initial;
     return false;
   }
+  state_ = initial;
+  return true;
 }
 
 Cube::operator std::string() const {
@@ -793,5 +857,5 @@ Cube::operator std::string() const {
     string += ColorToChar(color);
     string += ' ';
   }
-  return string ;
+  return string;
 }
