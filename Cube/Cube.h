@@ -53,19 +53,20 @@ class Cube {
   Cube();
   explicit Cube(const std::string &string);
   void InitializeBlank();
-  void Rotate(const std::string &input);
   std::string RandomScramble();
   bool IsStateCorrect();
+  void Rotate(const std::string &input);
   std::string Solve();
   explicit operator std::string() const;
   friend std::ostream &operator<<(std::ostream &os, const Cube &cube);
-
   friend constexpr char ColorToChar(Color color);
+
  private:
   std::array<Color, 54> state_{}; // 54 = (3 * 3) * 6
   static const int cube_size_ = 3;
-
   static constexpr int face_pieces_amount_ = 9;
+
+  void RotateWithOutput(const std::string &input, std::string &output);
   void RotateFace(Face face, Rotation rotation);
   bool Solved();
   bool SolvedCross(Face face, Color color);
