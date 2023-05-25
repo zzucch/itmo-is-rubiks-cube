@@ -116,30 +116,45 @@ void Cube::RotateFace(Face face, Rotation rotation) {
         adjacent_face_indexes =
             {U * face_pieces_amount_ + 6, U * face_pieces_amount_ + 7,
              U * face_pieces_amount_ + 8,
-             27, 30, 33,
-             47, 46, 45,
-             17, 14, 11};
+             R * face_pieces_amount_ + 0, R * face_pieces_amount_ + 3,
+             R * face_pieces_amount_ + 6,
+             D * face_pieces_amount_ + 2, D * face_pieces_amount_ + 1,
+             D * face_pieces_amount_ + 0,
+             L * face_pieces_amount_ + 8, L * face_pieces_amount_ + 5,
+             L * face_pieces_amount_ + 2};
         break;
       case R:
-        adjacent_face_indexes = {26, 23, 20,
-                                 8, 5, 2,
-                                 36, 39, 42,
-                                 53, 50, 47};
+        adjacent_face_indexes =
+            {F * face_pieces_amount_ + 8, F * face_pieces_amount_ + 5,
+             F * face_pieces_amount_ + 2,
+             U * face_pieces_amount_ + 8, U * face_pieces_amount_ + 5,
+             U * face_pieces_amount_ + 2,
+             B * face_pieces_amount_ + 0, B * face_pieces_amount_ + 3,
+             B * face_pieces_amount_ + 6,
+             D * face_pieces_amount_ + 8, D * face_pieces_amount_ + 5,
+             D * face_pieces_amount_ + 2};
         break;
       case B:
         adjacent_face_indexes =
-            {35, 32, 29,
+            {R * face_pieces_amount_ + 8, R * face_pieces_amount_ + 5,
+             R * face_pieces_amount_ + 2,
              U * face_pieces_amount_ + 2, U * face_pieces_amount_ + 1,
              U * face_pieces_amount_ + 0,
-             9, 12, 15,
-             51, 52, 53};
+             L * face_pieces_amount_ + 0, L * face_pieces_amount_ + 3,
+             L * face_pieces_amount_ + 6,
+             D * face_pieces_amount_ + 6, D * face_pieces_amount_ + 7,
+             D * face_pieces_amount_ + 8};
         break;
       case D:
         adjacent_face_indexes =
-            {24, 25, 26,
-             33, 34, 35,
-             42, 43, 44,
-             15, 16, 17};
+            {F * face_pieces_amount_ + 6, F * face_pieces_amount_ + 7,
+             F * face_pieces_amount_ + 8,
+             R * face_pieces_amount_ + 6, R * face_pieces_amount_ + 7,
+             R * face_pieces_amount_ + 8,
+             B * face_pieces_amount_ + 6, B * face_pieces_amount_ + 7,
+             B * face_pieces_amount_ + 8,
+             L * face_pieces_amount_ + 6, L * face_pieces_amount_ + 7,
+             L * face_pieces_amount_ + 8};
         break;
     }
 
@@ -202,13 +217,13 @@ std::ostream &operator<<(std::ostream &os, const Cube &cube) {
 
 std::string Cube::RandomScramble() {
   std::string scramble;
-  std::random_device rd;
-  std::mt19937 gen(rd());
-  std::uniform_int_distribution<int> dist(1, 12);
-  const int number_of_permutations = 18 + 3 * dist(gen);
+  std::random_device random_device;
+  std::mt19937 gen(random_device());
+  std::uniform_int_distribution<int> distribution(1, 12);
+  const int number_of_permutations = 18 + 3 * distribution(gen);
   int action;
   for (int i = 0; i < number_of_permutations; ++i) {
-    action = dist(gen);
+    action = distribution(gen);
     switch (action) {
       case 1:
         scramble += "R ";
@@ -383,52 +398,52 @@ std::string Cube::Solve() {
   if (!SolvedCross(D, Color::White) || !SolvedAdjacentToWhiteCross()) {
     // WHITE CROSS ON U
     while (!SolvedCross(U, Color::White)) {
-      if (state_[10] == Color::White) {
+      if (state_[L * face_pieces_amount_ + 1] == Color::White) {
         RotateWithOutput("L", moves);
-        while (state_[7] == Color::White) {
+        while (state_[U * face_pieces_amount_ + 7] == Color::White) {
           RotateWithOutput("U", moves);
         }
         RotateWithOutput("F", moves);
-      } else if (state_[19] == Color::White) {
+      } else if (state_[F * face_pieces_amount_ + 1] == Color::White) {
         RotateWithOutput("F", moves);
-        while (state_[5] == Color::White) {
+        while (state_[U * face_pieces_amount_ + 5] == Color::White) {
           RotateWithOutput("U", moves);
         }
         RotateWithOutput("R\'", moves);
-      } else if (state_[28] == Color::White) {
+      } else if (state_[R * face_pieces_amount_ + 1] == Color::White) {
         RotateWithOutput("R\'", moves);
-        while (state_[7] == Color::White) {
+        while (state_[U * face_pieces_amount_ + 7] == Color::White) {
           RotateWithOutput("U", moves);
         }
         RotateWithOutput("F\'", moves);
-      } else if (state_[37] == Color::White) {
+      } else if (state_[B * face_pieces_amount_ + 1] == Color::White) {
         RotateWithOutput("B", moves);
-        while (state_[3] == Color::White) {
+        while (state_[U * face_pieces_amount_ + 3] == Color::White) {
           RotateWithOutput("U", moves);
         }
         RotateWithOutput("L", moves);
-      } else if (state_[12] == Color::White) {
-        while (state_[1] == Color::White) {
+      } else if (state_[L * face_pieces_amount_ + 3] == Color::White) {
+        while (state_[U * face_pieces_amount_ + 1] == Color::White) {
           RotateWithOutput("U", moves);
         }
         RotateWithOutput("B\'", moves);
-      } else if (state_[14] == Color::White) {
-        while (state_[7] == Color::White) {
+      } else if (state_[L * face_pieces_amount_ + 5] == Color::White) {
+        while (state_[U * face_pieces_amount_ + 7] == Color::White) {
           RotateWithOutput("U", moves);
         }
         RotateWithOutput("F", moves);
-      } else if (state_[21] == Color::White) {
-        while (state_[3] == Color::White) {
+      } else if (state_[F * face_pieces_amount_ + 3] == Color::White) {
+        while (state_[U * face_pieces_amount_ + 3] == Color::White) {
           RotateWithOutput("U", moves);
         }
         RotateWithOutput("L\'", moves);
-      } else if (state_[23] == Color::White) {
-        while (state_[5] == Color::White) {
+      } else if (state_[F * face_pieces_amount_ + 5] == Color::White) {
+        while (state_[U * face_pieces_amount_ + 5] == Color::White) {
           RotateWithOutput("U", moves);
         }
         RotateWithOutput("R", moves);
-      } else if (state_[30] == Color::White) {
-        while (state_[7] == Color::White) {
+      } else if (state_[R * face_pieces_amount_ + 3] == Color::White) {
+        while (state_[U * face_pieces_amount_ + 7] == Color::White) {
           RotateWithOutput("U", moves);
         }
         RotateWithOutput("F\'", moves);
@@ -437,53 +452,53 @@ std::string Cube::Solve() {
           RotateWithOutput("U", moves);
         }
         RotateWithOutput("B", moves);
-      } else if (state_[39] == Color::White) {
-        while (state_[5] == Color::White) {
+      } else if (state_[B * face_pieces_amount_ + 3] == Color::White) {
+        while (state_[U * face_pieces_amount_ + 5] == Color::White) {
           RotateWithOutput("U", moves);
         }
         RotateWithOutput("R\'", moves);
-      } else if (state_[41] == Color::White) {
-        while (state_[3] == Color::White) {
+      } else if (state_[B * face_pieces_amount_ + 5] == Color::White) {
+        while (state_[U * face_pieces_amount_ + 3] == Color::White) {
           RotateWithOutput("U", moves);
         }
         RotateWithOutput("L", moves);
-      } else if (state_[16] == Color::White) {
-        while (state_[3] == Color::White) {
+      } else if (state_[L * face_pieces_amount_ + 7] == Color::White) {
+        while (state_[U * face_pieces_amount_ + 3] == Color::White) {
           RotateWithOutput("U", moves);
         }
         RotateWithOutput("L U B\'", moves);
-      } else if (state_[25] == Color::White) {
-        while (state_[7] == Color::White) {
+      } else if (state_[F * face_pieces_amount_ + 7] == Color::White) {
+        while (state_[U * face_pieces_amount_ + 7] == Color::White) {
           RotateWithOutput("U", moves);
         }
         RotateWithOutput("F U L\'", moves);
-      } else if (state_[34] == Color::White) {
-        while (state_[5] == Color::White) {
+      } else if (state_[R * face_pieces_amount_ + 7] == Color::White) {
+        while (state_[U * face_pieces_amount_ + 5] == Color::White) {
           RotateWithOutput("U", moves);
         }
         RotateWithOutput("R U F\'", moves);
-      } else if (state_[43] == Color::White) {
-        while (state_[1] == Color::White) {
+      } else if (state_[B * face_pieces_amount_ + 7] == Color::White) {
+        while (state_[U * face_pieces_amount_ + 1] == Color::White) {
           RotateWithOutput("U", moves);
         }
         RotateWithOutput("B U R\'", moves);
-      } else if (state_[46] == Color::White) {
-        while (state_[7] == Color::White) {
+      } else if (state_[D * face_pieces_amount_ + 1] == Color::White) {
+        while (state_[U * face_pieces_amount_ + 7] == Color::White) {
           RotateWithOutput("U", moves);
         }
         RotateWithOutput("F2", moves);
-      } else if (state_[48] == Color::White) {
-        while (state_[3] == Color::White) {
+      } else if (state_[D * face_pieces_amount_ + 3] == Color::White) {
+        while (state_[U * face_pieces_amount_ + 3] == Color::White) {
           RotateWithOutput("U", moves);
         }
         RotateWithOutput("L2", moves);
-      } else if (state_[50] == Color::White) {
-        while (state_[5] == Color::White) {
+      } else if (state_[D * face_pieces_amount_ + 5] == Color::White) {
+        while (state_[U * face_pieces_amount_ + 5] == Color::White) {
           RotateWithOutput("U", moves);
         }
         RotateWithOutput("R2", moves);
-      } else if (state_[52] == Color::White) {
-        while (state_[1] == Color::White) {
+      } else if (state_[D * face_pieces_amount_ + 7] == Color::White) {
+        while (state_[U * face_pieces_amount_ + 1] == Color::White) {
           RotateWithOutput("U", moves);
         }
         RotateWithOutput("B2", moves);
@@ -494,10 +509,10 @@ std::string Cube::Solve() {
 
     // WHITE CROSS ON D
     while (!SolvedCross(D, Color::White)) {
-      while (state_[7] != Color::White) {
+      while (state_[U * face_pieces_amount_ + 7] != Color::White) {
         RotateWithOutput("U", moves);
       }
-      switch (state_[19]) {
+      switch (state_[F * face_pieces_amount_ + 1]) {
         case Color::Blue:
           RotateWithOutput("U L2", moves);
           break;
@@ -581,6 +596,8 @@ std::string Cube::Solve() {
     } else if (state_[D * face_pieces_amount_ + 8] == Color::White
         && state_[R * face_pieces_amount_ + 8] != Color::Green) {
       RotateWithOutput(R"(B U B' U' B U B' U' B U B' U2)", moves);
+    } else {
+      throw std::logic_error("failed to solve white edges");
     }
   }
 
@@ -660,9 +677,11 @@ std::string Cube::Solve() {
     // Assuming everything up until this point is correct,
     // only colors to be == are yellow because others can
     // be present only once.
-    if (state_[1] == state_[3]) {
+    if (state_[U * face_pieces_amount_ + 1]
+        == state_[U * face_pieces_amount_ + 3]) {
       RotateWithOutput(R"(F R U R' U' R U R' U' F')", moves);
-    } else if (state_[3] == state_[5]) {
+    } else if (state_[U * face_pieces_amount_ + 3]
+        == state_[U * face_pieces_amount_ + 5]) {
       RotateWithOutput(R"(F R U R' U' F')", moves);
     } else if (state_[U * face_pieces_amount_ + 1] != Color::Yellow
         && state_[U * face_pieces_amount_ + 3] != Color::Yellow
@@ -673,23 +692,28 @@ std::string Cube::Solve() {
       RotateWithOutput("U", moves);
     }
   }
-  while (state_[19] != Color::Red) {
+  while (state_[F * face_pieces_amount_ + 1]
+      != state_[F * face_pieces_amount_ + 4]) {
     RotateWithOutput("U", moves);
   }
-  if (state_[10] != Color::Blue || state_[19] != Color::Red
-      || state_[28] != Color::Green || state_[37] != Color::Orange) {
-    if (state_[10] == Color::Blue) {
+  if (state_[L * face_pieces_amount_ + 1] != Color::Blue
+      || state_[F * face_pieces_amount_ + 1] != Color::Red
+      || state_[R * face_pieces_amount_ + 1] != Color::Green
+      || state_[B * face_pieces_amount_ + 1] != Color::Orange) {
+    if (state_[L * face_pieces_amount_ + 1] == Color::Blue) {
       RotateWithOutput("L U L\' U L U2 L\' U", moves);
-    } else if (state_[10] == Color::Orange) {
-      if (state_[28] == Color::Green) {
+    } else if (state_[L * face_pieces_amount_ + 1] == Color::Orange) {
+      if (state_[R * face_pieces_amount_ + 1] == Color::Green) {
         RotateWithOutput("F U F\' U F U2 F\' U", moves);
       } else {
         RotateWithOutput("U R U R\' U R U2 R\' U", moves);
       }
-    } else if (state_[10] == Color::Green) {
+    } else if (state_[L * face_pieces_amount_ + 1] == Color::Green) {
       RotateWithOutput(R"(U' B U B' U B U2 B' U)", moves);
-      if (state_[10] != Color::Blue || state_[19] != Color::Red
-          || state_[28] != Color::Green || state_[37] != Color::Orange) {
+      if (state_[L * face_pieces_amount_ + 1] != Color::Blue
+          || state_[F * face_pieces_amount_ + 1] != Color::Red
+          || state_[R * face_pieces_amount_ + 1] != Color::Green
+          || state_[B * face_pieces_amount_ + 1] != Color::Orange) {
         RotateWithOutput("U' R U R\' U R U2 R\' U2", moves);
       }
     }
@@ -697,18 +721,21 @@ std::string Cube::Solve() {
 
   // OLL
   while (!SolvedFace(U)) {
-    while (state_[8] == Color::Yellow) {
+    while (state_[U * face_pieces_amount_ + 8] == Color::Yellow) {
       RotateWithOutput("U", moves);
     }
-    if (state_[20] == Color::Yellow) {
+    if (state_[F * face_pieces_amount_ + 2] == Color::Yellow) {
       RotateWithOutput(R"(R F' R' F R F' R' F)", moves);
-    } else if (state_[27] == Color::Yellow) {
+    } else if (state_[R * face_pieces_amount_ + 0] == Color::Yellow) {
       RotateWithOutput(R"(F' R F R' F' R F R')", moves);
+    } else {
+      throw std::logic_error("failed to do OLL");
     }
   }
 
   // PLL
-  while (state_[19] != Color::Red) {
+  while (state_[F * face_pieces_amount_ + 1]
+      != state_[F * face_pieces_amount_ + 4]) {
     RotateWithOutput("U", moves);
   }
   if (Solved()) {
@@ -735,7 +762,8 @@ std::string Cube::Solve() {
             == state_[B * face_pieces_amount_ + 1]
             && state_[R * face_pieces_amount_ + 1]
                 == state_[R * face_pieces_amount_ + 2]) {
-          RotateWithOutput(R"(L D2 L' U' L D2 L' U2 L D2 L' U' L D2 L')", moves);
+          RotateWithOutput(R"(L D2 L' U' L D2 L' U2 L D2 L' U' L D2 L')",
+                           moves);
         } else if (state_[R * face_pieces_amount_ + 0]
             == state_[R * face_pieces_amount_ + 2]) {
           RotateWithOutput(R"(R2 U2 R2 U2 R2 U R2 U2 R2 U2 R2 U')", moves);
